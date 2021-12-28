@@ -28,6 +28,7 @@ def detect_fruits(img_path: str) -> Dict[str, int]:
     apple = 0
     banana = 0
     orange = 0
+    print('awdawdwad')
 
     return {'apple': apple, 'banana': banana, 'orange': orange}
 
