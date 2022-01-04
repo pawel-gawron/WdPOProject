@@ -30,8 +30,8 @@ def detect_fruits(img_path: str) -> Dict[str, int]:
     #TODO: Implement detection method.
     img = cv2.resize(img, (600, 600))
     imgHSV = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-    imgHSV_blur = cv2.GaussianBlur(imgHSV, (7, 7), 0)
-    cv2.imshow("imgHSV_blur", imgHSV_blur)
+    imgHSV_blur = cv2.GaussianBlur(imgHSV, (9, 9), 0)
+    cv2.imshow("img", img)
 
     apple = 0
     banana = 0
@@ -39,17 +39,17 @@ def detect_fruits(img_path: str) -> Dict[str, int]:
 
     # Create trackbars for color change
     # Hue is from 0-179 for Opencv
-    cv2.createTrackbar('HMin', 'imgHSV_blur', 0, 179, empty_callback)
-    cv2.createTrackbar('SMin', 'imgHSV_blur', 0, 255, empty_callback)
-    cv2.createTrackbar('VMin', 'imgHSV_blur', 0, 255, empty_callback)
-    cv2.createTrackbar('HMax', 'imgHSV_blur', 0, 179, empty_callback)
-    cv2.createTrackbar('SMax', 'imgHSV_blur', 0, 255, empty_callback)
-    cv2.createTrackbar('VMax', 'imgHSV_blur', 0, 255, empty_callback)
+    cv2.createTrackbar('HMin', 'img', 0, 179, empty_callback)
+    cv2.createTrackbar('SMin', 'img', 0, 255, empty_callback)
+    cv2.createTrackbar('VMin', 'img', 0, 255, empty_callback)
+    cv2.createTrackbar('HMax', 'img', 0, 179, empty_callback)
+    cv2.createTrackbar('SMax', 'img', 0, 255, empty_callback)
+    cv2.createTrackbar('VMax', 'img', 0, 255, empty_callback)
 
     # Set default value for Max HSV trackbars
-    cv2.setTrackbarPos('HMax', 'imgHSV_blur', 179)
-    cv2.setTrackbarPos('SMax', 'imgHSV_blur', 255)
-    cv2.setTrackbarPos('VMax', 'imgHSV_blur', 255)
+    cv2.setTrackbarPos('HMax', 'img', 179)
+    cv2.setTrackbarPos('SMax', 'img', 255)
+    cv2.setTrackbarPos('VMax', 'img', 255)
 
     hMin = sMin = vMin = 0
     hMax = 179
@@ -75,13 +75,19 @@ def detect_fruits(img_path: str) -> Dict[str, int]:
     cv2.imshow("maskOpenBanana", maskOpenBanana)
 
     while True:
-        cv2.imshow("imgHSV_blur", imgHSV_blur)
-        hMin = cv2.getTrackbarPos('HMin', 'imgHSV_blur')
-        sMin = cv2.getTrackbarPos('SMin', 'imgHSV_blur')
-        vMin = cv2.getTrackbarPos('VMin', 'imgHSV_blur')
-        hMax = cv2.getTrackbarPos('HMax', 'imgHSV_blur')
-        sMax = cv2.getTrackbarPos('SMax', 'imgHSV_blur')
-        vMax = cv2.getTrackbarPos('VMax', 'imgHSV_blur')
+        img2 = cv2.imread(img_path, cv2.IMREAD_COLOR)
+        img2 = cv2.resize(img2, (600, 600))
+        imgHSV = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+        imgHSV_blur = cv2.GaussianBlur(imgHSV, (9, 9), 0)
+
+        # imgHSV_blur_copy = imgHSV_blur.copy()
+
+        hMin = cv2.getTrackbarPos('HMin', 'img')
+        sMin = cv2.getTrackbarPos('SMin', 'img')
+        vMin = cv2.getTrackbarPos('VMin', 'img')
+        hMax = cv2.getTrackbarPos('HMax', 'img')
+        sMax = cv2.getTrackbarPos('SMax', 'img')
+        vMax = cv2.getTrackbarPos('VMax', 'img')
         # by the brightness
         # lowerBanana = np.array([48/2, 0.6*255, 255], dtype=np.int32)
         # upperBanana = np.array([48/2, 255, 255], dtype=np.int32)
@@ -120,16 +126,21 @@ def detect_fruits(img_path: str) -> Dict[str, int]:
 
         contours, hierarchy = cv2.findContours(image=maskOpenBanana, mode=cv2.RETR_EXTERNAL, method=cv2.CHAIN_APPROX_NONE)
 
-        cv2.drawContours(imgHSV_blur, contours, -1, (255, 255, 255), 5)
+        cv2.drawContours(imgHSV_blur, contours, -1, (255, 255, 255), 3)
 
         bgrMaskBanana = cv2.cvtColor(maskOpenBanana, cv2.COLOR_GRAY2BGR)
         imgFinal = cv2.addWeighted(bgrMaskBanana, 0.5, img, 0.5, 0)
 
+        imgFinalCopy = imgFinal.copy()
+        maskOpenBananaCopy = maskOpenBanana.copy()
+
 
         cv2.imshow("imgFinal", imgFinal)
         cv2.imshow("maskOpenBanana", maskOpenBanana)
+        cv2.imshow("img", img2)
+        cv2.imshow("imgHSV_blur", imgHSV_blur)
 
-        if cv2.waitKey(0) & 0xFF == ord('q'):
+        if cv2.waitKey(10) & 0xFF == ord('q'):
             break
     cv2.destroyAllWindows()
 
