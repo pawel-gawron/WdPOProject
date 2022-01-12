@@ -37,8 +37,8 @@ def detect_fruits(img_path: str) -> Dict[str, int]:
     banana = 0
     orange = 0
 
-    # Create trackbars for color change
-    # Hue is from 0-179 for Opencv
+    # # Create trackbars for color change
+    # # Hue is from 0-179 for Opencv
     cv2.createTrackbar('HMin', 'img', 0, 179, empty_callback)
     cv2.createTrackbar('SMin', 'img', 0, 255, empty_callback)
     cv2.createTrackbar('VMin', 'img', 0, 255, empty_callback)
@@ -54,33 +54,47 @@ def detect_fruits(img_path: str) -> Dict[str, int]:
     hMin = sMin = vMin = 0
     hMax = 179
     sMax = vMax = 255
-    lowerBanana = np.array([hMin, sMin, vMin], dtype=np.int32)
-    upperBanana = np.array([hMax, sMax, vMax], dtype=np.int32)
+    # lowerBanana = np.array([hMin, sMin, vMin], dtype=np.int32)
+    # upperBanana = np.array([hMax, sMax, vMax], dtype=np.int32)
+    lowerBanana = np.array([23, 71, 50], dtype=np.int32)
+    upperBanana = np.array([28, 255, 255], dtype=np.int32)
 
-    bananaMask_1 = cv2.inRange(imgHSV_blur, lowerBanana, upperBanana)
-    bananaMask = bananaMask_1
+    lowerApple = np.array([hMin, sMin, vMin], dtype=np.int32)
+    upperApple = np.array([hMax, sMax, vMax], dtype=np.int32)
 
-    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (10, 10))
-    maskCloseBanana = cv2.morphologyEx(bananaMask, cv2.MORPH_CLOSE, kernel)
-    maskOpenBanana = cv2.morphologyEx(maskCloseBanana, cv2.MORPH_OPEN, kernel)
+    bananaMask = cv2.inRange(imgHSV_blur, lowerBanana, upperBanana)
+    appleMask = cv2.inRange(imgHSV_blur, lowerApple, upperApple)
 
-    contours, hierarchy = cv2.findContours(image=maskOpenBanana, mode=cv2.RETR_EXTERNAL, method=cv2.CHAIN_APPROX_NONE)
+    kernel_banana = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (8, 8))
+    maskCloseBanana = cv2.morphologyEx(bananaMask, cv2.MORPH_CLOSE, kernel_banana)
+    maskOpenBanana = cv2.morphologyEx(maskCloseBanana, cv2.MORPH_OPEN, kernel_banana)
 
-    cv2.drawContours(imgHSV_blur, contours, -1, (255, 255, 255), 5)
+    kernel_apple = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (10, 10))
+    maskCloseApple = cv2.morphologyEx(appleMask, cv2.MORPH_CLOSE, kernel_apple)
+    maskOpenApple = cv2.morphologyEx(maskCloseApple, cv2.MORPH_OPEN, kernel_apple)
+
+    contours_banana, hierarchy_banana = cv2.findContours(image=maskOpenBanana, mode=cv2.RETR_EXTERNAL,
+                                                         method=cv2.CHAIN_APPROX_NONE)
+    contours_apple, hierarchy_apple = cv2.findContours(image=maskOpenApple, mode=cv2.RETR_EXTERNAL,
+                                                       method=cv2.CHAIN_APPROX_NONE)
+
+    cv2.drawContours(imgHSV_blur, contours_apple, -1, (255, 0, 0), 3)
 
     bgrMaskBanana = cv2.cvtColor(maskOpenBanana, cv2.COLOR_GRAY2BGR)
-    imgFinal = cv2.addWeighted(bgrMaskBanana, 0.5, img, 0.5, 0)
+    imgFinalBanana = cv2.addWeighted(bgrMaskBanana, 0.5, img, 0.5, 0)
 
-    cv2.imshow("imgFinal", imgFinal)
-    cv2.imshow("maskOpenBanana", maskOpenBanana)
+    bgrMaskApple = cv2.cvtColor(maskOpenApple, cv2.COLOR_GRAY2BGR)
+    imgFinalApple = cv2.addWeighted(bgrMaskApple, 0.5, img, 0.5, 0)
+
+    cv2.imshow("imgFinal", imgFinalApple)
+    cv2.imshow("maskOpen",maskOpenApple)
+    cv2.imshow("imgHSV_blur", imgHSV_blur)
 
     while True:
         img2 = cv2.imread(img_path, cv2.IMREAD_COLOR)
         img2 = cv2.resize(img2, (600, 600))
         imgHSV = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-        imgHSV_blur = cv2.GaussianBlur(imgHSV, (9, 9), 0)
-
-        # imgHSV_blur_copy = imgHSV_blur.copy()
+        imgHSV_blur = cv2.GaussianBlur(imgHSV, (13, 13), 0)
 
         hMin = cv2.getTrackbarPos('HMin', 'img')
         sMin = cv2.getTrackbarPos('SMin', 'img')
@@ -89,59 +103,72 @@ def detect_fruits(img_path: str) -> Dict[str, int]:
         sMax = cv2.getTrackbarPos('SMax', 'img')
         vMax = cv2.getTrackbarPos('VMax', 'img')
         # by the brightness
-        # lowerBanana = np.array([48/2, 0.6*255, 255], dtype=np.int32)
-        # upperBanana = np.array([48/2, 255, 255], dtype=np.int32)
-        lowerBanana = np.array([hMin, sMin, vMin], dtype=np.int32)
-        upperBanana = np.array([hMax, sMax, vMax], dtype=np.int32)
-        lowerApple = np.array([6 / 2, 0.57 * 255, 255], dtype=np.int32)
-        upperApple = np.array([6 / 2, 255, 255], dtype=np.int32)
-        lowerOrange = np.array([30 / 2, 0.7 * 255, 255], dtype=np.int32)
-        upperOrange = np.array([30 / 2, 255, 255], dtype=np.int32)
+        lowerBanana = np.array([23, 71, 50], dtype=np.int32)
+        upperBanana = np.array([28, 255, 255], dtype=np.int32)
+        # lowerBanana = np.array([hMin, sMin, vMin], dtype=np.int32)
+        # upperBanana = np.array([hMax, sMax, vMax], dtype=np.int32)
+        lowerApple = np.array([hMin, sMin, vMin], dtype=np.int32)
+        upperApple = np.array([hMax, sMax, vMax], dtype=np.int32)
+        # lowerApple = np.array([0, 112, 0], dtype=np.int32)
+        # upperApple = np.array([17, 218, 225], dtype=np.int32)
+        # lowerOrange = np.array([30 / 2, 0.7 * 255, 255], dtype=np.int32)
+        # upperOrange = np.array([30 / 2, 255, 255], dtype=np.int32)
+        lowerOrange = np.array([hMin, sMin, vMin], dtype=np.int32)
+        upperOrange = np.array([hMax, sMax, vMax], dtype=np.int32)
 
-        # by the color
-        # lowerBanana_2 = np.array([44/2, 255, 255], dtype=np.int32)
-        # upperBanana_2 = np.array([76/2, 255, 255], dtype=np.int32)
-        lowerBanana_2 = np.array([hMin, 255, 255], dtype=np.int32)
-        upperBanana_2 = np.array([hMax, 255, 255], dtype=np.int32)
-        lowerApple_2 = np.array([0, 255, 255], dtype=np.int32)
-        upperApple_2 = np.array([24/2, 255, 255], dtype=np.int32)
-        lowerOrange_2 = np.array([24/2, 255, 255], dtype=np.int32)
-        upperOrange_2 = np.array([44/2, 255, 255], dtype=np.int32)
+        bananaMask = cv2.inRange(imgHSV_blur, lowerBanana, upperBanana)
 
-        bananaMask_1 = cv2.inRange(imgHSV_blur, lowerBanana, upperBanana)
-        bananaMask_2 = cv2.inRange(imgHSV_blur, lowerBanana_2, upperBanana_2)
-        bananaMask = bananaMask_1
+        appleMask = cv2.inRange(imgHSV_blur, lowerApple, upperApple)
 
-        appleMask_1 = cv2.inRange(imgHSV_blur, lowerApple, upperApple)
-        appleMask_2 = cv2.inRange(imgHSV_blur, lowerApple_2, upperApple_2)
-        appleMask = appleMask_1 + appleMask_2
+        orangeMask = cv2.inRange(imgHSV_blur, lowerOrange, upperOrange)
 
-        orangeMask_1 = cv2.inRange(imgHSV_blur, lowerOrange, upperOrange)
-        orangeMask_2 = cv2.inRange(imgHSV_blur, lowerOrange_2, upperOrange_2)
-        orangeMask = orangeMask_1 + orangeMask_2
+        kernel_banana = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (8, 8))
+        maskCloseBanana = cv2.morphologyEx(bananaMask, cv2.MORPH_CLOSE, kernel_banana)
+        maskOpenBanana = cv2.morphologyEx(maskCloseBanana, cv2.MORPH_OPEN, kernel_banana)
 
-        kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (10, 10))
-        maskCloseBanana = cv2.morphologyEx(bananaMask, cv2.MORPH_CLOSE, kernel)
-        maskOpenBanana = cv2.morphologyEx(maskCloseBanana, cv2.MORPH_OPEN, kernel)
+        kernel_apple = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (10, 10))
+        maskCloseApple = cv2.morphologyEx(appleMask, cv2.MORPH_CLOSE, kernel_apple)
+        maskOpenApple = cv2.morphologyEx(maskCloseApple, cv2.MORPH_OPEN, kernel_apple)
 
-        contours, hierarchy = cv2.findContours(image=maskOpenBanana, mode=cv2.RETR_EXTERNAL, method=cv2.CHAIN_APPROX_NONE)
+        kernel_orange = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (10, 10))
+        maskCloseOrange = cv2.morphologyEx(appleMask, cv2.MORPH_CLOSE, kernel_orange)
+        maskOpenApple = cv2.morphologyEx(maskCloseApple, cv2.MORPH_OPEN, kernel_orange)
 
-        cv2.drawContours(imgHSV_blur, contours, -1, (255, 255, 255), 3)
+        contours_banana, hierarchy_banana = cv2.findContours(image=maskOpenBanana, mode=cv2.RETR_EXTERNAL,
+                                                             method=cv2.CHAIN_APPROX_NONE)
+        contours_apple, hierarchy_apple = cv2.findContours(image=maskOpenApple, mode=cv2.RETR_EXTERNAL,
+                                                             method=cv2.CHAIN_APPROX_NONE)
+        # print("kontury: ", contours)
+        # print("rozmiar: ", len(contours))
+        # print(banana)
+        for i in range(len(contours_banana)):
+            if len(contours_banana[i]) > 100:
+                banana = banana + 1
+                # print("wektor: ", len(contours_banana[i]))
+
+        for i in range(len(contours_apple)):
+            if len(contours_apple[i]) > 100:
+                apple = apple + 1
+                print("wektor: ", len(contours_apple[i]))
+
+        cv2.drawContours(imgHSV_blur, contours_apple, -1, (255, 0, 0), 3)
 
         bgrMaskBanana = cv2.cvtColor(maskOpenBanana, cv2.COLOR_GRAY2BGR)
-        imgFinal = cv2.addWeighted(bgrMaskBanana, 0.5, img, 0.5, 0)
+        imgFinalBanana = cv2.addWeighted(bgrMaskBanana, 0.5, img, 0.5, 0)
 
-        imgFinalCopy = imgFinal.copy()
-        maskOpenBananaCopy = maskOpenBanana.copy()
+        bgrMaskApple = cv2.cvtColor(maskOpenApple, cv2.COLOR_GRAY2BGR)
+        imgFinalApple = cv2.addWeighted(bgrMaskApple, 0.5, img, 0.5, 0)
 
 
-        cv2.imshow("imgFinal", imgFinal)
-        cv2.imshow("maskOpenBanana", maskOpenBanana)
+
+        cv2.imshow("imgFinal", imgFinalApple)
+        cv2.imshow("maskOpen", maskOpenApple)
         cv2.imshow("img", img2)
         cv2.imshow("imgHSV_blur", imgHSV_blur)
 
         if cv2.waitKey(10) & 0xFF == ord('q'):
             break
+    cv2.waitKey(0)
     cv2.destroyAllWindows()
 
 
