@@ -3,7 +3,6 @@ import json
 import click
 import numpy as np
 
-from glob import glob
 from tqdm import tqdm
 
 from typing import Dict
@@ -29,10 +28,13 @@ def detect_fruits(img_path: str) -> Dict[str, int]:
     img = cv2.imread(img_path, cv2.IMREAD_COLOR)
 
     #TODO: Implement detection method.
+    iteration = 4
     img = cv2.resize(img, (600, 600))
     imgHSV = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     imgHSV_blur = cv2.medianBlur(imgHSV, 11)
-    imgHSV_blur = cv2.medianBlur(imgHSV_blur, 11)
+
+    for x in range(iteration):
+        imgHSV_blur = cv2.medianBlur(imgHSV_blur, 11)
     # cv2.imshow("img", img)
 
     apple = 0
@@ -132,15 +134,15 @@ def detect_fruits(img_path: str) -> Dict[str, int]:
     #     sMax = cv2.getTrackbarPos('SMax', 'img')
     #     vMax = cv2.getTrackbarPos('VMax', 'img')
 
-    lowerBanana = np.array([21, 82, 44], dtype=np.int32)
+    lowerBanana = np.array([22, 69, 44], dtype=np.int32)
     upperBanana = np.array([53, 255, 255], dtype=np.int32)
     # lowerBanana = np.array([hMin, sMin, vMin], dtype=np.int32)
     # upperBanana = np.array([hMax, sMax, vMax], dtype=np.int32)
     # lowerApple = np.array([hMin, sMin, vMin], dtype=np.int32)
     # upperApple = np.array([hMax, sMax, vMax], dtype=np.int32)
-    lowerApple = np.array([0, 50, 0], dtype=np.int32)
+    lowerApple = np.array([0, 112, 0], dtype=np.int32)
     upperApple = np.array([17, 218, 225], dtype=np.int32)
-    lowerOrange = np.array([0, 170, 170], dtype=np.int32)
+    lowerOrange = np.array([12, 175, 175], dtype=np.int32)
     upperOrange = np.array([19, 255, 255], dtype=np.int32)
     # lowerOrange = np.array([hMin, sMin, vMin], dtype=np.int32)
     # upperOrange = np.array([hMax, sMax, vMax], dtype=np.int32)
@@ -173,12 +175,12 @@ def detect_fruits(img_path: str) -> Dict[str, int]:
     # print("rozmiar: ", len(contours))
     # print(banana)
     for i in range(len(contours_banana)):
-        if len(contours_banana[i]) > 380:
+        if len(contours_banana[i]) > 200:
             banana = banana + 1
             # print("wektor: ", len(contours_banana[i]))
 
     for i in range(len(contours_apple)):
-        if len(contours_apple[i]) > 200:
+        if len(contours_apple[i]) > 160:
             apple = apple + 1
             # print("wektor: ", len(contours_apple[i]))
 
