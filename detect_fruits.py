@@ -31,10 +31,9 @@ def detect_fruits(img_path: str) -> Dict[str, int]:
     #TODO: Implement detection method.
     img = cv2.resize(img, (600, 600))
     imgHSV = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-    imgHSV_blur = cv2.GaussianBlur(imgHSV, (11, 11), 0)
-    imgHSV_blur = cv2.GaussianBlur(imgHSV_blur, (11, 11), 0)
-    imgHSV_blur = cv2.GaussianBlur(imgHSV_blur, (11, 11), 0)
-    cv2.imshow("img", img)
+    imgHSV_blur = cv2.medianBlur(imgHSV, 11)
+    imgHSV_blur = cv2.medianBlur(imgHSV_blur, 11)
+    # cv2.imshow("img", img)
 
     apple = 0
     banana = 0
@@ -49,10 +48,10 @@ def detect_fruits(img_path: str) -> Dict[str, int]:
     # cv2.createTrackbar('SMax', 'img', 0, 255, empty_callback)
     # cv2.createTrackbar('VMax', 'img', 0, 255, empty_callback)
     #
-    # hMin = 22
-    # sMin = 69
-    # vMin = 44
-    # hMax = 53
+    # hMin = 12
+    # sMin = 175
+    # vMin = 175
+    # hMax = 19
     # sMax = 255
     # vMax = 255
     #
@@ -65,18 +64,19 @@ def detect_fruits(img_path: str) -> Dict[str, int]:
     # cv2.setTrackbarPos('SMin', 'img', sMin)
     # cv2.setTrackbarPos('VMin', 'img', vMin)
     #
-    # lowerBanana = np.array([hMin, sMin, vMin], dtype=np.int32)
-    # upperBanana = np.array([hMax, sMax, vMax], dtype=np.int32)
-    # # lowerBanana = np.array([22, 69, 44], dtype=np.int32)
-    # # upperBanana = np.array([53, 255, 255], dtype=np.int32)
+    # # lowerBanana = np.array([hMin, sMin, vMin], dtype=np.int32)
+    # # upperBanana = np.array([hMax, sMax, vMax], dtype=np.int32)
+    # lowerBanana = np.array([21, 82, 44], dtype=np.int32)
+    # upperBanana = np.array([53, 255, 255], dtype=np.int32)
     #
     # # lowerApple = np.array([hMin, sMin, vMin], dtype=np.int32)
     # # upperApple = np.array([hMax, sMax, vMax], dtype=np.int32)
-    # lowerApple = np.array([0, 112, 0], dtype=np.int32)
+    # lowerApple = np.array([0, 50, 0], dtype=np.int32)
     # upperApple = np.array([17, 220, 230], dtype=np.int32)
     #
     # # lowerOrange = np.array([hMin, sMin, vMin], dtype=np.int32)
-    # lowerOrange = np.array([12, 175, 175], dtype=np.int32)
+    # # upperOrange = np.array([hMax, sMax, vMax], dtype=np.int32)
+    # lowerOrange = np.array([0, 170, 170], dtype=np.int32)
     # upperOrange = np.array([19, 255, 255], dtype=np.int32)
     #
     # bananaMask = cv2.inRange(imgHSV_blur, lowerBanana, upperBanana)
@@ -113,34 +113,34 @@ def detect_fruits(img_path: str) -> Dict[str, int]:
     # bgrMaskOrange = cv2.cvtColor(maskOpenOrange, cv2.COLOR_GRAY2BGR)
     # imgFinalOrange = cv2.addWeighted(bgrMaskOrange, 0.5, img, 0.5, 0)
     #
-    # cv2.imshow("imgFinal", imgFinalApple)
-    # cv2.imshow("maskOpen",maskOpenBanana)
-    # cv2.imshow("imgHSV_blur", imgHSV_blur)
+    # # cv2.imshow("imgFinal", imgFinalOrange)
+    # # cv2.imshow("maskOpen",maskOpenOrange)
+    # # cv2.imshow("imgHSV_blur", imgHSV_blur)
     #
     # while True:
-    # img2 = cv2.imread(img_path, cv2.IMREAD_COLOR)
-    # img2 = cv2.resize(img2, (600, 600))
-    # imgHSV = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-    # imgHSV_blur = cv2.GaussianBlur(imgHSV, (11, 11), 0)
-    # imgHSV_blur = cv2.GaussianBlur(imgHSV_blur, (11, 11), 0)
-    # imgHSV_blur = cv2.GaussianBlur(imgHSV_blur, (11, 11), 0)
+    #     img2 = cv2.imread(img_path, cv2.IMREAD_COLOR)
+    #     img2 = cv2.resize(img2, (600, 600))
+    #     imgHSV = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+    #     imgHSV_blur = cv2.medianBlur(imgHSV, 11)
+    #     imgHSV_blur = cv2.medianBlur(imgHSV_blur, 11)
+    #     imgHSV_blur = cv2.medianBlur(imgHSV_blur, 11)
+    #
+    #     hMin = cv2.getTrackbarPos('HMin', 'img')
+    #     sMin = cv2.getTrackbarPos('SMin', 'img')
+    #     vMin = cv2.getTrackbarPos('VMin', 'img')
+    #     hMax = cv2.getTrackbarPos('HMax', 'img')
+    #     sMax = cv2.getTrackbarPos('SMax', 'img')
+    #     vMax = cv2.getTrackbarPos('VMax', 'img')
 
-    # hMin = cv2.getTrackbarPos('HMin', 'img')
-    # sMin = cv2.getTrackbarPos('SMin', 'img')
-    # vMin = cv2.getTrackbarPos('VMin', 'img')
-    # hMax = cv2.getTrackbarPos('HMax', 'img')
-    # sMax = cv2.getTrackbarPos('SMax', 'img')
-    # vMax = cv2.getTrackbarPos('VMax', 'img')
-    # by the brightness
-    lowerBanana = np.array([22, 69, 44], dtype=np.int32)
+    lowerBanana = np.array([21, 82, 44], dtype=np.int32)
     upperBanana = np.array([53, 255, 255], dtype=np.int32)
     # lowerBanana = np.array([hMin, sMin, vMin], dtype=np.int32)
     # upperBanana = np.array([hMax, sMax, vMax], dtype=np.int32)
     # lowerApple = np.array([hMin, sMin, vMin], dtype=np.int32)
     # upperApple = np.array([hMax, sMax, vMax], dtype=np.int32)
-    lowerApple = np.array([0, 112, 0], dtype=np.int32)
+    lowerApple = np.array([0, 50, 0], dtype=np.int32)
     upperApple = np.array([17, 218, 225], dtype=np.int32)
-    lowerOrange = np.array([12, 175, 175], dtype=np.int32)
+    lowerOrange = np.array([0, 170, 170], dtype=np.int32)
     upperOrange = np.array([19, 255, 255], dtype=np.int32)
     # lowerOrange = np.array([hMin, sMin, vMin], dtype=np.int32)
     # upperOrange = np.array([hMax, sMax, vMax], dtype=np.int32)
@@ -163,31 +163,31 @@ def detect_fruits(img_path: str) -> Dict[str, int]:
     maskCloseOrange = cv2.morphologyEx(orangeMask, cv2.MORPH_CLOSE, kernel_orange)
     maskOpenOrange = cv2.morphologyEx(maskCloseOrange, cv2.MORPH_OPEN, kernel_orange)
 
-    contours_banana, hierarchy_banana = cv2.findContours(image=maskOpenBanana, mode=cv2.RETR_EXTERNAL,
+    contours_banana, _ = cv2.findContours(image=maskOpenBanana, mode=cv2.RETR_EXTERNAL,
                                                          method=cv2.CHAIN_APPROX_NONE)
-    contours_apple, hierarchy_apple = cv2.findContours(image=maskOpenApple, mode=cv2.RETR_EXTERNAL,
+    contours_apple, _ = cv2.findContours(image=maskOpenApple, mode=cv2.RETR_EXTERNAL,
                                                          method=cv2.CHAIN_APPROX_NONE)
-    contours_orange, hierarchy_orange = cv2.findContours(image=maskOpenOrange, mode=cv2.RETR_EXTERNAL,
+    contours_orange, _ = cv2.findContours(image=maskOpenOrange, mode=cv2.RETR_EXTERNAL,
                                                          method=cv2.CHAIN_APPROX_NONE)
     # print("kontury: ", contours)
     # print("rozmiar: ", len(contours))
     # print(banana)
     for i in range(len(contours_banana)):
-        if len(contours_banana[i]) > 200:
+        if len(contours_banana[i]) > 380:
             banana = banana + 1
             # print("wektor: ", len(contours_banana[i]))
 
     for i in range(len(contours_apple)):
-        if len(contours_apple[i]) > 160:
+        if len(contours_apple[i]) > 200:
             apple = apple + 1
-            print("wektor: ", len(contours_apple[i]))
+            # print("wektor: ", len(contours_apple[i]))
 
     for i in range(len(contours_orange)):
         if len(contours_orange[i]) > 200:
             orange = orange + 1
-            print("wektor: ", len(contours_orange[i]))
+            # print("wektor: ", len(contours_orange[i]))
 
-    cv2.drawContours(imgHSV_blur, contours_banana, -1, (255, 0, 0), 3)
+    cv2.drawContours(imgHSV_blur, contours_apple, -1, (255, 0, 0), 3)
 
     bgrMaskBanana = cv2.cvtColor(maskOpenBanana, cv2.COLOR_GRAY2BGR)
     imgFinalBanana = cv2.addWeighted(bgrMaskBanana, 0.5, img, 0.5, 0)
@@ -198,15 +198,15 @@ def detect_fruits(img_path: str) -> Dict[str, int]:
     bgrMaskOrange = cv2.cvtColor(maskOpenOrange, cv2.COLOR_GRAY2BGR)
     imgFinalOrange = cv2.addWeighted(bgrMaskOrange, 0.5, img, 0.5, 0)
 
-    cv2.imshow("imgFinal", imgFinalBanana)
-    cv2.imshow("maskOpen", maskOpenBanana + maskOpenApple + maskOpenOrange)
-    cv2.imshow("img", img)
-    cv2.imshow("imgHSV_blur", imgHSV_blur)
+    # cv2.imshow("imgFinal", imgFinalOrange)
+    # cv2.imshow("maskOpen", maskOpenOrange + maskOpenApple + maskOpenBanana)
+    # cv2.imshow("img", img)
+    # cv2.imshow("imgHSV_blur", imgHSV_blur)
 
     # if cv2.waitKey(10) & 0xFF == ord('q'):
     #     break
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
 
 
     return {'apple': apple, 'banana': banana, 'orange': orange}
